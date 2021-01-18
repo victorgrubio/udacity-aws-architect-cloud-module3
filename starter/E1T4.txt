@@ -1,0 +1,17 @@
+Based on the architecture diagram, and the steps you have taken so far to upload data and access the application web service, identify at least 2 obvious poor practices as it relates to security.  Include justification.
+
+# Poor practice 1: Security access to instances
+The web application is deployed in a public subnet. Therefore, we provide public access to the server that is retrieving the data from the s3 containers. This should be placed in a private subnet which actually has no instances in it. 
+As a result, if we establish connections only from our load balancer in the public address, then the platform would be more secure.
+
+# Poor practice 2: S3 encryption
+The s3 files are not encrypted in this deployment. We should encrypt this folder using the KMS service to prevent that the attacking instance can read the content of our files if stolen.
+
+Additional improvements:
+
+The VPC specifies that we can connect to the web instance by ssh from any IP address. This is very insecure as if the credentials are stolen anyone can connect to the instance. Therefore, we should filter the IP from we accept connections to this instance to avoid this type of problems.
+
+Moreover, the security group specified unrestricted access from any IP in the declaration:
+      - IpProtocol: -1
+        CidrIp: 0.0.0.0/0
+This is extremely insecure, because we have no filter for accessing our instance.

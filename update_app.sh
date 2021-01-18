@@ -1,0 +1,2 @@
+#!/bin/bash
+aws cloudformation update-stack --region us-east-1 --stack-name c3-app --template-body file://starter/c3-app-solution.yml  --parameters ParameterKey=KeyPair,ParameterValue=udacity-module3 --capabilities CAPABILITY_IAM

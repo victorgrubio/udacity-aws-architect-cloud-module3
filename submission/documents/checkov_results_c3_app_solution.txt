@@ -1,0 +1,144 @@
+
+
+       _               _              
+   ___| |__   ___  ___| | _______   __
+  / __| '_ \ / _ \/ __| |/ / _ \ \ / /
+ | (__| | | |  __/ (__|   < (_) \ V / 
+  \___|_| |_|\___|\___|_|\_\___/ \_/  
+                                      
+By bridgecrew.io | version: 1.0.669 
+Update available 1.0.669 → 1.0.674
+Run pip3 install -U checkov to update 
+
+
+cloudformation scan results:
+
+Passed checks: 6, Failed checks: 5, Skipped checks: 0
+
+Check: CKV_AWS_61: "Ensure IAM role allows only specific principals in account to assume it"
+	PASSED for resource: AWS::IAM::Role.InstanceRole
+	File: c3-app-solution.yml:16-40
+
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: AWS::EC2::SecurityGroup.WebAppSG
+	File: c3-app-solution.yml:49-70
+
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: AWS::EC2::SecurityGroup.WebAppSG
+	File: c3-app-solution.yml:49-70
+
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	PASSED for resource: AWS::EC2::SecurityGroup.AppLoadBalancerSG
+	File: c3-app-solution.yml:100-113
+
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: AWS::EC2::SecurityGroup.AppLoadBalancerSG
+	File: c3-app-solution.yml:100-113
+
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+	PASSED for resource: AWS::EC2::SecurityGroup.AttackInstanceSG
+	File: c3-app-solution.yml:153-166
+
+Check: CKV_AWS_23: "Ensure every security groups rule has a description"
+	FAILED for resource: AWS::EC2::SecurityGroup.WebAppSG
+	File: c3-app-solution.yml:49-70
+
+		49 |   WebAppSG:
+		50 |     Type: AWS::EC2::SecurityGroup
+		51 |     Properties:
+		52 |       GroupName: WebAppSG
+		53 |       GroupDescription: "Security group for this application server"
+		54 |       SecurityGroupEgress:
+		55 |       - IpProtocol: -1
+		56 |         CidrIp: 0.0.0.0/0
+		57 |       SecurityGroupIngress:
+		58 |       - IpProtocol: tcp
+		59 |         FromPort: 22
+		60 |         ToPort: 22
+		61 |         CidrIp: 10.192.10.0/24 # Ips from Subnet of load Balancer
+		62 |       - IpProtocol: tcp
+		63 |         FromPort: 5000
+		64 |         ToPort: 5000
+		65 |         CidrIp: 0.0.0.0/0
+		66 |       - IpProtocol: tcp
+		67 |         FromPort: 80
+		68 |         ToPort: 80
+		69 |         CidrIp: 0.0.0.0/0
+		70 |       VpcId: !ImportValue VpcId
+
+
+Check: CKV_AWS_23: "Ensure every security groups rule has a description"
+	FAILED for resource: AWS::EC2::SecurityGroup.AppLoadBalancerSG
+	File: c3-app-solution.yml:100-113
+
+		100 |   AppLoadBalancerSG:
+		101 |     Type: AWS::EC2::SecurityGroup
+		102 |     Properties:
+		103 |       GroupName: AppLoadBalancerSG
+		104 |       GroupDescription: "Security group for this application server"
+		105 |       SecurityGroupEgress:
+		106 |       - IpProtocol: -1
+		107 |         CidrIp: 0.0.0.0/0
+		108 |       SecurityGroupIngress:
+		109 |       - IpProtocol: tcp
+		110 |         FromPort: 80
+		111 |         ToPort: 80
+		112 |         CidrIp: 0.0.0.0/0
+		113 |       VpcId: !ImportValue VpcId
+
+
+Check: CKV_AWS_2: "Ensure ALB protocol is HTTPS"
+	FAILED for resource: AWS::ElasticLoadBalancingV2::Listener.AppLoadBalancerListener
+	File: c3-app-solution.yml:130-138
+
+		130 |   AppLoadBalancerListener:
+		131 |     Type: AWS::ElasticLoadBalancingV2::Listener
+		132 |     Properties:
+		133 |       DefaultActions:
+		134 |         - Type: forward
+		135 |           TargetGroupArn: !Ref AppTargetGroup
+		136 |       LoadBalancerArn: !Ref AppLoadBalancer
+		137 |       Port: 80
+		138 |       Protocol: HTTP
+
+
+Check: CKV_AWS_23: "Ensure every security groups rule has a description"
+	FAILED for resource: AWS::EC2::SecurityGroup.AttackInstanceSG
+	File: c3-app-solution.yml:153-166
+
+		153 |   AttackInstanceSG:
+		154 |     Type: AWS::EC2::SecurityGroup
+		155 |     Properties:
+		156 |       GroupName: AttackInstanceSG
+		157 |       GroupDescription: "Security group for the attack instance"
+		158 |       SecurityGroupEgress:
+		159 |       - IpProtocol: -1
+		160 |         CidrIp: 0.0.0.0/0
+		161 |       SecurityGroupIngress:
+		162 |       - IpProtocol: tcp
+		163 |         FromPort: 22
+		164 |         ToPort: 22
+		165 |         CidrIp: 0.0.0.0/0
+		166 |       VpcId: !ImportValue VpcId
+
+
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+	FAILED for resource: AWS::EC2::SecurityGroup.AttackInstanceSG
+	File: c3-app-solution.yml:153-166
+
+		153 |   AttackInstanceSG:
+		154 |     Type: AWS::EC2::SecurityGroup
+		155 |     Properties:
+		156 |       GroupName: AttackInstanceSG
+		157 |       GroupDescription: "Security group for the attack instance"
+		158 |       SecurityGroupEgress:
+		159 |       - IpProtocol: -1
+		160 |         CidrIp: 0.0.0.0/0
+		161 |       SecurityGroupIngress:
+		162 |       - IpProtocol: tcp
+		163 |         FromPort: 22
+		164 |         ToPort: 22
+		165 |         CidrIp: 0.0.0.0/0
+		166 |       VpcId: !ImportValue VpcId
+
+
